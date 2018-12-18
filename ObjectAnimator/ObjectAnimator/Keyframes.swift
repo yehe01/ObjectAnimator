@@ -48,7 +48,6 @@ public class KeyframeSet<T, U: TypeEvaluator>: Keyframes where U.valueType == T 
             if fraction < nextKeyframe.fraction {
                 let prevFraction = prevKeyframe.fraction
                 let intervalFraction = (fraction - prevFraction) / (nextKeyframe.fraction - prevFraction)
-                return nextKeyframe.value!
                 return evaluator.evaluate(fraction: intervalFraction, startValue: prevKeyframe.value!, endValue: nextKeyframe.value!)
             } else {
                 prevKeyframe = nextKeyframe

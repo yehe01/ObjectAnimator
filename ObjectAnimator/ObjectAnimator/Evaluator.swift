@@ -16,6 +16,19 @@ public class IntEvaluator: TypeEvaluator {
     }
 
     public func evaluate(fraction: Float, startValue: Int, endValue: Int) -> Int {
-        return (Int)(Float(startValue) + fraction * (Float)(endValue - startValue));
+        print("asdf")
+
+        return (Int)(Float(startValue) + fraction * (Float)(endValue - startValue))
+    }
+}
+
+public class FloatEvaluator: TypeEvaluator {
+    public init() {
+
+    }
+
+    public func evaluate(fraction: Float, startValue: Float, endValue: Float) -> Float {
+        print("asdf")
+        return Float(startValue) + fraction * (Float)(endValue - startValue)
     }
 }
