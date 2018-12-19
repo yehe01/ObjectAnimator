@@ -8,7 +8,7 @@ import Foundation
 public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U.valueType == T {
 
     var startTime: TimeInterval = -1
-    private var isStarted = false
+    var isStarted = false
     private var isRunning = false
     private var currentFraction: Float = 0.0;
 
@@ -16,6 +16,7 @@ public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U
     var valueHolder: PropertyValuesHolder<T, U>?
 
     var updateListeners: Array<(ObjectAnimator) -> Void> = []
+    var listeners: [AnimatorListener<T, U>] = []
 
     public convenience init(values: [T], evaluator: U) {
         if values.count == 0 {
@@ -46,16 +47,22 @@ public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U
         }
     }
 
-    public func animateBasedOnTime(currentTime: TimeInterval) {
+    private func animateBasedOnTime(currentTime: TimeInterval) -> Bool {
         let fraction = (Float)((currentTime - startTime) / duration)
+        let lastIterationFinished = fraction >= 1
         animateValue(fraction: fraction)
+        return lastIterationFinished
     }
 
     public func doAnimationFrame(frameTime: TimeInterval) {
         if startTime < 0 {
             startTime = frameTime
         }
-        animateBasedOnTime(currentTime: frameTime)
+        let finished = animateBasedOnTime(currentTime: frameTime)
+
+        if finished {
+            end()
+        }
     }
 
     public func start() {
@@ -66,7 +73,14 @@ public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U
         startTime = -1
         isStarted = true
         addAnimationCallback()
+        notifyStartListeners()
         setCurrentPlayTime(0)
+    }
+
+    private func notifyStartListeners() {
+        _ = listeners.map { l in
+            l.onAnimationStart(animator: self)
+        }
     }
 
     public func end() {
@@ -95,4 +109,29 @@ public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U
         let fraction = duration > 0 ? (Float)(playTime / duration) : 1
         currentFraction = fraction
     }
+
+    public func addListener(_ v: AnimatorListener<T, U>) {
+        listeners.append(v)
+    }
 }
+
+public protocol AnimatorListenerProtocol {
+    associatedtype myType
+    associatedtype evaluatorType: TypeEvaluator where evaluatorType.valueType == myType
+
+    func onAnimationStart(animator: ObjectAnimator<myType, evaluatorType>)
+}
+
+// https://stackoverflow.com/a/34584464
+public struct AnimatorListener<T, E: TypeEvaluator>: AnimatorListenerProtocol where E.valueType == T {
+    private let _onAnimationStart: (ObjectAnimator<T, E>) -> ()
+
+    init<P: AnimatorListenerProtocol>(_ dep: P) where P.myType == T, P.evaluatorType == E {
+        _onAnimationStart = dep.onAnimationStart
+    }
+
+    public func onAnimationStart(animator: ObjectAnimator<T, E>) {
+        _onAnimationStart(animator)
+    }
+}
+
