@@ -28,6 +28,13 @@ public class AnimationHandler {
         }
     }
 
+    func removeAnimationFrameCallback(_ animator: AnimationFrameCallback) {
+        frameCallbackProvider.callback = nil
+
+        animationCallbacks = animationCallbacks.filter() { $0 !== animator }
+    }
+
+
     func doAnimationFrame(frameTime: TimeInterval) {
         _ = animationCallbacks.map { c in
             c.doAnimationFrame(frameTime: frameTime)
@@ -45,7 +52,7 @@ public class ManualFrameCallbackProvider: AnimationFrameCallbackProvider {
 
     public func setFrameTime(_ frameTime: TimeInterval) {
         callback?.doFrame(frameTimeNanos: frameTime)
-        callback = nil
+//        callback = nil
     }
 }
 

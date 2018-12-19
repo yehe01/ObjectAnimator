@@ -7,7 +7,7 @@ import Foundation
 
 public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U.valueType == T {
 
-    private var startTime: TimeInterval = -1
+    var startTime: TimeInterval = -1
     private var isStarted = false
     private var isRunning = false
     private var currentFraction: Float = 0.0;
@@ -52,6 +52,9 @@ public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U
     }
 
     public func doAnimationFrame(frameTime: TimeInterval) {
+        if startTime < 0 {
+            startTime = frameTime
+        }
         animateBasedOnTime(currentTime: frameTime)
     }
 
@@ -59,7 +62,8 @@ public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U
         guard isStarted == false else {
             return
         }
-        startTime = 0
+
+        startTime = -1
         isStarted = true
         addAnimationCallback()
         setCurrentPlayTime(0)
@@ -68,11 +72,15 @@ public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U
     public func end() {
         startTime = -1
         isStarted = false
-//        removeAnimationCallback()
+        removeAnimationCallback()
     }
 
     private func addAnimationCallback() {
         AnimationHandler.shared.addAnimationFrameCallback(self)
+    }
+
+    private func removeAnimationCallback() {
+        AnimationHandler.shared.removeAnimationFrameCallback(self)
     }
 
     public func getAnimationHandler() -> AnimationHandler {

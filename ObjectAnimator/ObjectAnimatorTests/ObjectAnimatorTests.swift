@@ -11,24 +11,53 @@ import XCTest
 
 class ObjectAnimatorTests: XCTestCase {
 
+    var animator: ObjectAnimator<Float, FloatEvaluator>!
+
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        animator = ObjectAnimator(values: [11.0, 22.0, 121212.0], evaluator: FloatEvaluator())
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        animator.end()
     }
 
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testStartTimeSetToWhenFirstFrameArrived() {
+        animator.duration = 3
+        let provider = animator.getAnimationHandler().frameCallbackProvider
+
+        animator.start()
+        XCTAssertEqual(animator.startTime, -1,  "Start time should be -1")
+        provider.setFrameTime(2)
+        XCTAssertEqual(animator.startTime, 2,  "Start time should be 2")
     }
 
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    func testIntermediateAnimatedValue() {
+        animator.duration = 5
+        let provider = animator.getAnimationHandler().frameCallbackProvider
+
+        animator.start()
+        provider.setFrameTime(0)
+        provider.setFrameTime(1)
+        XCTAssertEqual(animator.getAnimatedValue()!, 15.4,  "Animated value should be 15.4")
     }
 
+    func testStartAnimatedValue() {
+        animator.duration = 5
+        let provider = animator.getAnimationHandler().frameCallbackProvider
+
+        animator.start()
+        provider.setFrameTime(0)
+        XCTAssertEqual(animator.getAnimatedValue()!, 11.0,  "Animated value should be 11.0")
+    }
+
+    func testFinalAnimatedValue() {
+        animator.duration = 5
+        let provider = animator.getAnimationHandler().frameCallbackProvider
+
+        animator.start()
+        // first frame arrives at 3
+        provider.setFrameTime(3)
+        provider.setFrameTime(8)
+        XCTAssertEqual(animator.getAnimatedValue()!, 121212.0,  "Animated value should be 121212.0")
+    }
 }
