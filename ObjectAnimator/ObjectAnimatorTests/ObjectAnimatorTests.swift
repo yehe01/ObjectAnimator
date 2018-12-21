@@ -49,9 +49,20 @@ class ObjectAnimatorTests: XCTestCase {
         provider.setFrameTime(1)
         XCTAssertEqual(animator.startTime, 1, "Start time should be -1")
         XCTAssertEqual(animator.isStarted, true, "isStarted should be true")
-        provider.setFrameTime(4)
+        provider.setFrameTime(5)
         XCTAssertEqual(animator.startTime, -1, "Start time should be -1")
         XCTAssertEqual(animator.isStarted, false, "isStarted should be false")
+    }
+
+    func testProviderResetAfterDuration() {
+        animator.duration = 3
+        let provider = animator.getAnimationHandler().frameCallbackProvider
+
+        animator.start()
+        provider.setFrameTime(1)
+        XCTAssertNotNil(provider.callback, "Provider callback should not be nil")
+        provider.setFrameTime(5)
+        XCTAssertNil(provider.callback, "Provider callback should be nil")
     }
 
     func testIntermediateAnimatedValue() {
@@ -102,5 +113,25 @@ class ObjectAnimatorTests: XCTestCase {
         XCTAssertEqual(testListener.startCalled, false, "startCalled should be false")
         animator.start()
         XCTAssertEqual(testListener.startCalled, true, "startCalled should be true")
+    }
+    
+    func testAnimatorDrivenBySystemPulse() {
+//        animator.duration = 5
+//        
+//        class TestFloatAnimatorListener: AnimatorListenerProtocol {
+//            var startCalled = false
+//            
+//            func onAnimationStart(animator: ObjectAnimator<Float, FloatEvaluator>) {
+//                startCalled = true
+//            }
+//        }
+//        
+//        let testListener = TestFloatAnimatorListener()
+//        let listener = AnimatorListener<Float, FloatEvaluator>(testListener)
+//        animator.addListener(listener)
+//        
+//        XCTAssertEqual(testListener.startCalled, false, "startCalled should be false")
+//        animator.start()
+//        XCTAssertEqual(testListener.startCalled, true, "startCalled should be true")
     }
 }

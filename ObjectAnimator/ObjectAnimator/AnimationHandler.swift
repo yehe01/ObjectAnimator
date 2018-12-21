@@ -29,7 +29,7 @@ public class AnimationHandler {
     }
 
     func removeAnimationFrameCallback(_ animator: AnimationFrameCallback) {
-        frameCallbackProvider.callback = nil
+        frameCallbackProvider.reset()
 
         animationCallbacks = animationCallbacks.filter() { $0 !== animator }
     }
@@ -44,15 +44,49 @@ public class AnimationHandler {
 }
 
 public class ManualFrameCallbackProvider: AnimationFrameCallbackProvider {
+
     var callback: FrameCallback?
 
     func postFrameCallback(_ callback: FrameCallback) {
         self.callback = callback
     }
 
+    func reset() {
+        callback = nil
+    }
+
     public func setFrameTime(_ frameTime: TimeInterval) {
         callback?.doFrame(frameTimeNanos: frameTime)
-//        callback = nil
+    }
+}
+
+// Provides system pulse using CADisplayLink
+public class SystemFrameCallbackProvider: AnimationFrameCallbackProvider {
+    var callback: FrameCallback?
+    private var displayLink: CADisplayLink? = nil
+    
+    @objc func step(displaylink: CADisplayLink) {
+        print(displaylink.timestamp)
+    }
+    
+    func postFrameCallback(_ callback: FrameCallback) {
+        self.callback = callback
+
+        displayLink = CADisplayLink(target: self,
+                                    selector: #selector(step))
+        
+        displayLink?.add(to: .current, forMode: .common)
+    }
+
+    func reset() {
+        callback = nil
+        
+        displayLink?.invalidate()
+        displayLink = nil
+    }
+
+    public func setFrameTime(_ frameTime: TimeInterval) {
+        callback?.doFrame(frameTimeNanos: frameTime)
     }
 }
 
@@ -62,9 +96,10 @@ protocol AnimationFrameCallback: AnyObject {
 }
 
 protocol AnimationFrameCallbackProvider {
-    // Posts a frame callback to run on the next frame.
-    // The callback runs once then is automatically removed.
+    // Set frame callback to run on upcoming frames.
     func postFrameCallback(_ callback: FrameCallback)
+
+    func reset()
 }
 
 protocol FrameCallback {
