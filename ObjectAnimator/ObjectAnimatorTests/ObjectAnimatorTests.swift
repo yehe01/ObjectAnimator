@@ -100,38 +100,90 @@ class ObjectAnimatorTests: XCTestCase {
 
         class TestFloatAnimatorListener: AnimatorListenerProtocol {
             var startCalled = false
+            var endCalled = false
 
             func onAnimationStart(animator: ObjectAnimator<Float, FloatEvaluator>) {
                 startCalled = true
             }
+
+            func onAnimationEnd(animator: ObjectAnimator<Float, FloatEvaluator>) {
+                endCalled = true
+            }
         }
+
+        let provider = animator.getAnimationHandler().frameCallbackProvider
 
         let testListener = TestFloatAnimatorListener()
         let listener = AnimatorListener<Float, FloatEvaluator>(testListener)
         animator.addListener(listener)
 
         XCTAssertEqual(testListener.startCalled, false, "startCalled should be false")
+        XCTAssertEqual(testListener.startCalled, false, "endCalled should be false")
+
         animator.start()
+        provider.setFrameTime(0)
+
         XCTAssertEqual(testListener.startCalled, true, "startCalled should be true")
+
+        animator.end()
+        XCTAssertEqual(testListener.endCalled, true, "endCalled should be true")
     }
-    
-    func testAnimatorDrivenBySystemPulse() {
+
+    // MARK: Animator using system pulse provider
+
+    func testAnimatorDrivenBySystemPulseProvider() {
+        animator.duration = 3
+        let expectation = self.expectation(description: "Animation")
+
+        class TestFloatAnimatorListener: AnimatorListenerProtocol {
+            var endCalled = false
+            var expectation: XCTestExpectation!
+
+            init(exp: XCTestExpectation) {
+                self.expectation = exp
+            }
+
+            func onAnimationEnd(animator: ObjectAnimator<Float, FloatEvaluator>) {
+                endCalled = true
+                expectation.fulfill()
+            }
+        }
+
+        animator.getAnimationHandler().frameCallbackProvider = SystemFrameCallbackProvider()
+
+        let testListener = TestFloatAnimatorListener(exp: expectation)
+        let listener = AnimatorListener<Float, FloatEvaluator>(testListener)
+        animator.addListener(listener)
+
+        XCTAssertEqual(testListener.endCalled, false, "startCalled should be false")
+        animator.start()
+
+        waitForExpectations(timeout: 4, handler: nil)
+        XCTAssertEqual(testListener.endCalled, true, "startCalled should be true")
+        XCTAssertEqual(animator.getAnimatedValue(), 121212.0, "Animated value should be 121212.0")
+    }
+
+//    func testAnimatedValues() {
 //        animator.duration = 5
-//        
+//
 //        class TestFloatAnimatorListener: AnimatorListenerProtocol {
-//            var startCalled = false
-//            
-//            func onAnimationStart(animator: ObjectAnimator<Float, FloatEvaluator>) {
-//                startCalled = true
+//            var endCalled = false
+//
+//            func onAnimationEnd(animator: ObjectAnimator<Float, FloatEvaluator>) {
+//                endCalled = true
 //            }
 //        }
-//        
+//
+//        animator.getAnimationHandler().frameCallbackProvider = SystemFrameCallbackProvider()
+//
 //        let testListener = TestFloatAnimatorListener()
 //        let listener = AnimatorListener<Float, FloatEvaluator>(testListener)
 //        animator.addListener(listener)
-//        
-//        XCTAssertEqual(testListener.startCalled, false, "startCalled should be false")
+//
+//        XCTAssertNil(animator.getAnimatedValue(), "Start animated value should be nil")
+//        XCTAssertEqual(testListener.endCalled, false, "startCalled should be false")
 //        animator.start()
-//        XCTAssertEqual(testListener.startCalled, true, "startCalled should be true")
-    }
+//        XCTAssertEqual(testListener.endCalled, true, "startCalled should be true")
+//    }
+
 }

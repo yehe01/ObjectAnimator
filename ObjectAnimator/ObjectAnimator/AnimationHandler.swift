@@ -4,10 +4,11 @@
 //
 
 import Foundation
+import UIKit
 
 public class AnimationHandler {
     static let shared = AnimationHandler()
-    public var frameCallbackProvider = ManualFrameCallbackProvider()
+    public var frameCallbackProvider: AnimationFrameCallbackProvider = ManualFrameCallbackProvider()
 
     class DefaultFrameCallback: FrameCallback {
         func doFrame(frameTimeNanos: TimeInterval) {
@@ -31,7 +32,9 @@ public class AnimationHandler {
     func removeAnimationFrameCallback(_ animator: AnimationFrameCallback) {
         frameCallbackProvider.reset()
 
-        animationCallbacks = animationCallbacks.filter() { $0 !== animator }
+        animationCallbacks = animationCallbacks.filter() {
+            $0 !== animator
+        }
     }
 
 
@@ -44,14 +47,13 @@ public class AnimationHandler {
 }
 
 public class ManualFrameCallbackProvider: AnimationFrameCallbackProvider {
+    public var callback: FrameCallback?
 
-    var callback: FrameCallback?
-
-    func postFrameCallback(_ callback: FrameCallback) {
+    public func postFrameCallback(_ callback: FrameCallback) {
         self.callback = callback
     }
 
-    func reset() {
+    public func reset() {
         callback = nil
     }
 
@@ -62,25 +64,27 @@ public class ManualFrameCallbackProvider: AnimationFrameCallbackProvider {
 
 // Provides system pulse using CADisplayLink
 public class SystemFrameCallbackProvider: AnimationFrameCallbackProvider {
-    var callback: FrameCallback?
+    public var callback: FrameCallback?
     private var displayLink: CADisplayLink? = nil
-    
-    @objc func step(displaylink: CADisplayLink) {
-        print(displaylink.timestamp)
+
+    @objc func step(displayLink: CADisplayLink) {
+
+//        print(displaylink.timestamp)
+        callback?.doFrame(frameTimeNanos: displayLink.timestamp)
     }
-    
-    func postFrameCallback(_ callback: FrameCallback) {
+
+    public func postFrameCallback(_ callback: FrameCallback) {
         self.callback = callback
 
         displayLink = CADisplayLink(target: self,
-                                    selector: #selector(step))
-        
+                selector: #selector(step))
+
         displayLink?.add(to: .current, forMode: .common)
     }
 
-    func reset() {
+    public func reset() {
         callback = nil
-        
+
         displayLink?.invalidate()
         displayLink = nil
     }
@@ -95,13 +99,17 @@ protocol AnimationFrameCallback: AnyObject {
     func doAnimationFrame(frameTime: TimeInterval)
 }
 
-protocol AnimationFrameCallbackProvider {
+public protocol AnimationFrameCallbackProvider {
+    var callback: FrameCallback? { get set }
+
     // Set frame callback to run on upcoming frames.
     func postFrameCallback(_ callback: FrameCallback)
+
+    func setFrameTime(_ frameTime: TimeInterval)
 
     func reset()
 }
 
-protocol FrameCallback {
+public protocol FrameCallback {
     func doFrame(frameTimeNanos: TimeInterval)
 }

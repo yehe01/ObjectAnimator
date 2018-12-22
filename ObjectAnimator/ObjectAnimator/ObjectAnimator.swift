@@ -83,9 +83,19 @@ public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U
         }
     }
 
+    private func notifyEndListeners() {
+        _ = listeners.map { l in
+            l.onAnimationEnd(animator: self)
+        }
+    }
+
     public func end() {
+        guard isStarted == true else {
+            return
+        }
         startTime = -1
         isStarted = false
+        notifyEndListeners()
         removeAnimationCallback()
     }
 
@@ -120,18 +130,34 @@ public protocol AnimatorListenerProtocol {
     associatedtype evaluatorType: TypeEvaluator where evaluatorType.valueType == myType
 
     func onAnimationStart(animator: ObjectAnimator<myType, evaluatorType>)
+    func onAnimationEnd(animator: ObjectAnimator<myType, evaluatorType>)
+}
+
+extension AnimatorListenerProtocol {
+    func onAnimationStart(animator: ObjectAnimator<myType, evaluatorType>) {
+    }
+
+
+    func onAnimationEnd(animator: ObjectAnimator<myType, evaluatorType>) {
+    }
 }
 
 // https://stackoverflow.com/a/34584464
 public struct AnimatorListener<T, E: TypeEvaluator>: AnimatorListenerProtocol where E.valueType == T {
     private let _onAnimationStart: (ObjectAnimator<T, E>) -> ()
+    private let _onAnimationEnd: (ObjectAnimator<T, E>) -> ()
 
     init<P: AnimatorListenerProtocol>(_ dep: P) where P.myType == T, P.evaluatorType == E {
         _onAnimationStart = dep.onAnimationStart
+        _onAnimationEnd = dep.onAnimationEnd
     }
 
     public func onAnimationStart(animator: ObjectAnimator<T, E>) {
         _onAnimationStart(animator)
+    }
+
+    public func onAnimationEnd(animator: ObjectAnimator<T, E>) {
+        _onAnimationEnd(animator)
     }
 }
 
