@@ -12,18 +12,20 @@ import XCTest
 class ObjectAnimatorTests: XCTestCase {
 
     var animator: ObjectAnimator<Float, FloatEvaluator>!
+    var provider: AnimationFrameCallbackProvider!
 
     override func setUp() {
         animator = ObjectAnimator(values: [11.0, 22.0, 121212.0], evaluator: FloatEvaluator())
+        provider = ManualFrameCallbackProvider()
+        AnimationHandler.shared.frameCallbackProvider = provider
     }
 
     override func tearDown() {
         animator.end()
     }
 
-    func testStartTimeSetToWhenFirstFrameArrived() {
+    func testSetStartTimeWhenFirstFrameArrived() {
         animator.duration = 3
-        let provider = animator.getAnimationHandler().frameCallbackProvider
 
         animator.start()
         XCTAssertEqual(animator.startTime, -1, "Start time should be -1")
@@ -33,7 +35,6 @@ class ObjectAnimatorTests: XCTestCase {
 
     func testEndResetStartTime() {
         animator.duration = 3
-        let provider = animator.getAnimationHandler().frameCallbackProvider
 
         animator.start()
         provider.setFrameTime(0)
@@ -43,31 +44,16 @@ class ObjectAnimatorTests: XCTestCase {
 
     func testAnimationEndAfterDuration() {
         animator.duration = 3
-        let provider = animator.getAnimationHandler().frameCallbackProvider
 
         animator.start()
-        provider.setFrameTime(1)
-        XCTAssertEqual(animator.startTime, 1, "Start time should be -1")
         XCTAssertEqual(animator.isStarted, true, "isStarted should be true")
-        provider.setFrameTime(5)
-        XCTAssertEqual(animator.startTime, -1, "Start time should be -1")
-        XCTAssertEqual(animator.isStarted, false, "isStarted should be false")
-    }
-
-    func testProviderResetAfterDuration() {
-        animator.duration = 3
-        let provider = animator.getAnimationHandler().frameCallbackProvider
-
-        animator.start()
         provider.setFrameTime(1)
-        XCTAssertNotNil(provider.callback, "Provider callback should not be nil")
         provider.setFrameTime(5)
-        XCTAssertNil(provider.callback, "Provider callback should be nil")
+        XCTAssertEqual(animator.isStarted, false, "isStarted should be false")
     }
 
     func testIntermediateAnimatedValue() {
         animator.duration = 5
-        let provider = animator.getAnimationHandler().frameCallbackProvider
 
         animator.start()
         provider.setFrameTime(0)
@@ -77,8 +63,6 @@ class ObjectAnimatorTests: XCTestCase {
 
     func testStartAnimatedValue() {
         animator.duration = 5
-        let provider = animator.getAnimationHandler().frameCallbackProvider
-
         animator.start()
         provider.setFrameTime(0)
         XCTAssertEqual(animator.getAnimatedValue()!, 11.0, "Animated value should be 11.0")
@@ -86,7 +70,6 @@ class ObjectAnimatorTests: XCTestCase {
 
     func testFinalAnimatedValue() {
         animator.duration = 5
-        let provider = animator.getAnimationHandler().frameCallbackProvider
 
         animator.start()
         // first frame arrives at 3
@@ -111,8 +94,6 @@ class ObjectAnimatorTests: XCTestCase {
             }
         }
 
-        let provider = animator.getAnimationHandler().frameCallbackProvider
-
         let testListener = TestFloatAnimatorListener()
         let listener = AnimatorListener<Float, FloatEvaluator>(testListener)
         animator.addListener(listener)
@@ -132,7 +113,7 @@ class ObjectAnimatorTests: XCTestCase {
     // MARK: Animator using system pulse provider
 
     func testAnimatorDrivenBySystemPulseProvider() {
-        animator.duration = 3
+        animator.duration = 1
         let expectation = self.expectation(description: "Animation")
 
         class TestFloatAnimatorListener: AnimatorListenerProtocol {
@@ -149,8 +130,7 @@ class ObjectAnimatorTests: XCTestCase {
             }
         }
 
-        animator.getAnimationHandler().frameCallbackProvider = SystemFrameCallbackProvider()
-
+        AnimationHandler.shared.frameCallbackProvider = SystemFrameCallbackProvider()
         let testListener = TestFloatAnimatorListener(exp: expectation)
         let listener = AnimatorListener<Float, FloatEvaluator>(testListener)
         animator.addListener(listener)
@@ -158,32 +138,48 @@ class ObjectAnimatorTests: XCTestCase {
         XCTAssertEqual(testListener.endCalled, false, "startCalled should be false")
         animator.start()
 
-        waitForExpectations(timeout: 4, handler: nil)
+        waitForExpectations(timeout: 2, handler: nil)
         XCTAssertEqual(testListener.endCalled, true, "startCalled should be true")
         XCTAssertEqual(animator.getAnimatedValue(), 121212.0, "Animated value should be 121212.0")
     }
 
-//    func testAnimatedValues() {
-//        animator.duration = 5
-//
-//        class TestFloatAnimatorListener: AnimatorListenerProtocol {
-//            var endCalled = false
-//
-//            func onAnimationEnd(animator: ObjectAnimator<Float, FloatEvaluator>) {
-//                endCalled = true
-//            }
-//        }
-//
-//        animator.getAnimationHandler().frameCallbackProvider = SystemFrameCallbackProvider()
-//
-//        let testListener = TestFloatAnimatorListener()
-//        let listener = AnimatorListener<Float, FloatEvaluator>(testListener)
-//        animator.addListener(listener)
-//
-//        XCTAssertNil(animator.getAnimatedValue(), "Start animated value should be nil")
-//        XCTAssertEqual(testListener.endCalled, false, "startCalled should be false")
-//        animator.start()
-//        XCTAssertEqual(testListener.endCalled, true, "startCalled should be true")
-//    }
+    func testKeyframeAnimatedValues() {
+        let intAnimator = ObjectAnimator(values: [1, 2, 3], evaluator: IntEvaluator())
+        let expectation = self.expectation(description: "Animation")
+
+        intAnimator.duration = 1
+
+        class TestIntAnimatorListener: AnimatorListenerProtocol {
+            var expectation: XCTestExpectation!
+
+            init(exp: XCTestExpectation) {
+                self.expectation = exp
+            }
+
+            func onAnimationEnd(animator: ObjectAnimator<Int, IntEvaluator>) {
+                expectation.fulfill()
+            }
+        }
+        
+        AnimationHandler.shared.frameCallbackProvider = SystemFrameCallbackProvider()
+
+        let expectedValues: Set = [1, 2, 3]
+        var values: Set<Int> = []
+        intAnimator.addUpdateListener() { a in
+            guard let value = a.getAnimatedValue() else {
+                return
+            }
+            values.insert(value)
+        }
+
+        let testListener = TestIntAnimatorListener(exp: expectation)
+        let listener = AnimatorListener<Int, IntEvaluator>(testListener)
+        intAnimator.addListener(listener)
+
+        intAnimator.start()
+        waitForExpectations(timeout: 2, handler: nil)
+
+        XCTAssertEqual(values, expectedValues, "Should have all keyframe animated values")
+    }
 
 }

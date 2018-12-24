@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		980BAB0721D0DDD60056B9F6 /* AnimationHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 980BAB0621D0DDD60056B9F6 /* AnimationHandlerTests.swift */; };
 		98D918A621BF80490022A7A4 /* ObjectAnimator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98D9189C21BF80480022A7A4 /* ObjectAnimator.framework */; };
 		98D918AB21BF80490022A7A4 /* ObjectAnimatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D918AA21BF80490022A7A4 /* ObjectAnimatorTests.swift */; };
 		98D918AD21BF80490022A7A4 /* ObjectAnimator.h in Headers */ = {isa = PBXBuildFile; fileRef = 98D9189F21BF80480022A7A4 /* ObjectAnimator.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -30,6 +31,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		980BAB0621D0DDD60056B9F6 /* AnimationHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationHandlerTests.swift; sourceTree = "<group>"; };
 		98D9189C21BF80480022A7A4 /* ObjectAnimator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ObjectAnimator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		98D9189F21BF80480022A7A4 /* ObjectAnimator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectAnimator.h; sourceTree = "<group>"; };
 		98D918A021BF80480022A7A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 			children = (
 				98D918AA21BF80490022A7A4 /* ObjectAnimatorTests.swift */,
 				98D918AC21BF80490022A7A4 /* Info.plist */,
+				980BAB0621D0DDD60056B9F6 /* AnimationHandlerTests.swift */,
 			);
 			path = ObjectAnimatorTests;
 			sourceTree = "<group>";
@@ -233,6 +236,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				98D918AB21BF80490022A7A4 /* ObjectAnimatorTests.swift in Sources */,
+				980BAB0721D0DDD60056B9F6 /* AnimationHandlerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

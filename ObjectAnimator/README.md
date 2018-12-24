@@ -1,9 +1,15 @@
-##Todo
+## Todo (Essential)
 
-* Resume/Pause
 * Jank before first frame?
-* Delay
-* Reverse
+* Resume/Pause
+* Start delay
 * Repeat
+* Reverse
 * Interpolator
+
+## Todo
+
+* AnimatorSet
+* Multiple property values holder?
+* Input verification e.g. duration >= 0
 

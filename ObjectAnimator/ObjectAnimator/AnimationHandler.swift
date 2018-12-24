@@ -8,7 +8,7 @@ import UIKit
 
 public class AnimationHandler {
     static let shared = AnimationHandler()
-    public var frameCallbackProvider: AnimationFrameCallbackProvider = ManualFrameCallbackProvider()
+    public var frameCallbackProvider: AnimationFrameCallbackProvider = SystemFrameCallbackProvider()
 
     class DefaultFrameCallback: FrameCallback {
         func doFrame(frameTimeNanos: TimeInterval) {
@@ -30,10 +30,12 @@ public class AnimationHandler {
     }
 
     func removeAnimationFrameCallback(_ animator: AnimationFrameCallback) {
-        frameCallbackProvider.reset()
-
         animationCallbacks = animationCallbacks.filter() {
             $0 !== animator
+        }
+        
+        if animationCallbacks.isEmpty {
+            frameCallbackProvider.reset()
         }
     }
 
