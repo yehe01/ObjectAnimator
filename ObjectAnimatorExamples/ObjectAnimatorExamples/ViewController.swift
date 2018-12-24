@@ -8,41 +8,154 @@
 
 import UIKit
 import ObjectAnimator
+import MapKit
 
-class ViewController: UIViewController {
-
+class ViewController: UIViewController, MKMapViewDelegate {
+    private var polyline: MKPolyline?
+    private var points: [CLLocationCoordinate2D] = []
+    private var mapView: MKMapView!
+    private var startAnnotation: MKPointAnnotation?
+    private var endAnnotation: MKPointAnnotation?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-//
-//        let keyframe = Keyframe<Int>(value: 3, fraction: 0.3)
-//        print(keyframe)
-//        let keyframes = KeyframeSet<Int, IntEvaluator>(values: [11, 22, 121212], evaluator: IntEvaluator())
-//        print(keyframes.getKeyframes())
-
-//        keyframes.setEvaluator(evaluator: IntEvaluator())
-//        print(keyframes.getValue(fraction: 0.0))
-//        print(keyframes.getValue(fraction: 0.5))
-//        print(keyframes.getValue(fraction: 1.0))
-
-        let animator = ObjectAnimator(values: [11.0, 22.0, 121212.0], evaluator: FloatEvaluator())
-        animator.duration = 5
-
-        print(animator.getAnimatedValue())
-
-        let provider = animator.getAnimationHandler().frameCallbackProvider as! ManualFrameCallbackProvider
-
-        animator.addUpdateListener() { a in
-            print("In listener")
-            print(a.getAnimatedValue())
-        }
-
-        animator.start()
-        provider.setFrameTime(1)
-//
-//        animator.animateValue(fraction: 0.5)
-//        print((animator.getAnimatedValue()))
+        mapView = MKMapView(frame: .zero)
+        view.addSubview(mapView)
+        
+        mapView.translatesAutoresizingMaskIntoConstraints = false
+        let attributes: [NSLayoutConstraint.Attribute] = [.top, .bottom, .right, .left]
+        NSLayoutConstraint.activate(attributes.map {
+            NSLayoutConstraint(item: mapView, attribute: $0, relatedBy: .equal, toItem: view, attribute: $0, multiplier: 1, constant: 0)
+        })
+        
+        let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(addAnnotation))
+        recognizer.minimumPressDuration = 2.0
+        
+        mapView.addGestureRecognizer(recognizer)
+        mapView.delegate = self
+        
+        let initLocation = CLLocationCoordinate2D(latitude: -37.812115, longitude: 144.962625)
+        let viewRegion = MKCoordinateRegion(center: initLocation, latitudinalMeters: 300, longitudinalMeters: 300)
+        mapView.setRegion(viewRegion, animated: false)
     }
-
-
+    
+    @objc func addAnnotation(gestureRecognizer: UIGestureRecognizer) {
+        guard gestureRecognizer.state == .began else {
+            return
+        }
+        
+        let touchPoint = gestureRecognizer.location(in: mapView)
+        let newCoordinates = mapView.convert(touchPoint, toCoordinateFrom: mapView)
+        let annotation = MKPointAnnotation()
+        annotation.coordinate = newCoordinates
+        
+        if startAnnotation == nil {
+            startAnnotation = annotation
+            mapView.addAnnotation(annotation)
+        } else if endAnnotation == nil {
+            endAnnotation = annotation
+            mapView.addAnnotation(annotation)
+            showRouteOnMap(start: startAnnotation!.coordinate, end: endAnnotation!.coordinate)
+        } else {
+            mapView.removeAnnotations([startAnnotation!, endAnnotation!])
+            if let polyline = polyline {
+                mapView.removeOverlay(polyline)
+                self.polyline = nil
+            }
+            endAnnotation = nil
+            startAnnotation = annotation
+            mapView.addAnnotation(annotation)
+        }
+        
+    }
+    
+    func showRouteOnMap(start: CLLocationCoordinate2D, end: CLLocationCoordinate2D) {
+        let sourcePlacemark = MKPlacemark(coordinate: start, addressDictionary: nil)
+        let destinationPlacemark = MKPlacemark(coordinate: end, addressDictionary: nil)
+        
+        let sourceMapItem = MKMapItem(placemark: sourcePlacemark)
+        let destinationMapItem = MKMapItem(placemark: destinationPlacemark)
+        
+        let directionRequest = MKDirections.Request()
+        directionRequest.source = sourceMapItem
+        directionRequest.destination = destinationMapItem
+        directionRequest.transportType = .automobile
+        
+        let directions = MKDirections(request: directionRequest)
+        
+        directions.calculate {
+            (response, error) -> Void in
+            
+            guard let response = response else {
+                if let error = error {
+                    print("Error: \(error)")
+                }
+                
+                return
+            }
+            
+            let route = response.routes[0]
+            self.polyline = route.polyline
+//            self.mapView.addOverlay(route.polyline)
+            
+            let rect = route.polyline.boundingMapRect
+            let padding = CGFloat(20.0)
+            self.mapView.setVisibleMapRect(rect, edgePadding: UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding), animated: true)
+            
+            self.animateRouteDrawing()
+        }
+        
+    }
+    
+    func animateRouteDrawing() {
+        guard let polyline = self.polyline else {
+            return
+        }
+        
+        points = []
+        let coordinates = polyline.coordinates
+        
+        let animator = ObjectAnimator(values: coordinates, evaluator: LatLngEvaluator())
+        // todo: adjust keyframe fraction based on distance to achive uniform speed
+        animator.duration = 3
+        animator.addUpdateListener { [weak self] animator in
+            guard let coordinate = animator.getAnimatedValue() else {
+                return
+            }
+            
+            self?.points.append(coordinate)
+            guard let points = self?.points, let polyline = self?.polyline else {
+                return
+            }
+            
+            let newPolyline = MKPolyline(coordinates: points, count: points.count)
+            self?.polyline = newPolyline
+            self?.mapView.addOverlay(newPolyline)
+            self?.mapView.removeOverlay(polyline)
+        }
+        
+        animator.start()
+    }
+    
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        let polylineRenderer = MKPolylineRenderer(overlay: overlay)
+        if overlay is MKPolyline {
+            polylineRenderer.strokeColor = UIColor.blue
+            polylineRenderer.lineWidth = 5
+        }
+        return polylineRenderer
+    }
 }
+
+public extension MKMultiPoint {
+    var coordinates: [CLLocationCoordinate2D] {
+        var coords = [CLLocationCoordinate2D](repeating: kCLLocationCoordinate2DInvalid,
+                                              count: pointCount)
+        
+        getCoordinates(&coords, range: NSRange(location: 0, length: pointCount))
+        
+        return coords
+    }
+}
+
 

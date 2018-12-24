@@ -35,7 +35,7 @@ class AnimationHandlerTests: XCTestCase {
         XCTAssertFalse(handler.animationCallbacks.isEmpty, "Animator callbacks should not be empty")
         
         provider.setFrameTime(5)
-        XCTAssertTrue(handler.animationCallbacks.isEmpty, "Provider callbacks should be empty")
+        XCTAssertTrue(handler.animationCallbacks.isEmpty, "Animator callbacks should be empty")
     }
     
     func testMultipleAnimatorCallbacks() {
@@ -50,9 +50,10 @@ class AnimationHandlerTests: XCTestCase {
         XCTAssertEqual(handler.animationCallbacks.count, 2, "Should have 2 animator callbacks")
         
         provider.setFrameTime(5)
-        XCTAssertEqual(handler.animationCallbacks.count, 1, "Provider callbacks should be empty")
+        XCTAssertEqual(handler.animationCallbacks.count, 1, "Should have 1 animator callbacks")
+        
         provider.setFrameTime(7)
-        XCTAssertEqual(handler.animationCallbacks.count, 0, "Provider callbacks should be empty")
+        XCTAssertEqual(handler.animationCallbacks.count, 0, "Animator callbacks should be empty")
     }
 
 }
