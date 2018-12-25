@@ -26,7 +26,7 @@ public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U
         self.init(valueHolder: PropertyValuesHolder<T, U>(values: values, evaluator: evaluator))
     }
 
-    init(valueHolder: PropertyValuesHolder<T, U>?) {
+    public init(valueHolder: PropertyValuesHolder<T, U>?) {
         self.valueHolder = valueHolder
     }
 
