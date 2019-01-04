@@ -6,17 +6,21 @@
 import Foundation
 
 public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U.valueType == T {
-
+    
     var startTime: TimeInterval = -1
     var isStarted = false
-    private var isRunning = false
-    private var currentFraction: Float = 0.0;
+//    private var isRunning = false
+    private(set) var currentFraction: Float = 0.0;
 
     public var duration: TimeInterval = -1
+    public var repeatCount: Int = 0
+
     var valueHolder: PropertyValuesHolder<T, U>?
 
     var updateListeners: Array<(ObjectAnimator) -> Void> = []
     var listeners: [AnimatorListener<T, U>] = []
+
+    private var overallFraction: Float = 0.0
 
     public convenience init(values: [T], evaluator: U) {
         if values.count == 0 {
@@ -49,9 +53,41 @@ public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U
 
     private func animateBasedOnTime(currentTime: TimeInterval) -> Bool {
         let fraction = (Float)((currentTime - startTime) / duration)
-        let lastIterationFinished = fraction >= 1
-        animateValue(fraction: fraction)
+        let lastIterationFinished = fraction >= Float(repeatCount + 1) && repeatCount != RepeatCount.INFINITE
+        let newIteration = Int(fraction) > Int(overallFraction)
+        if newIteration && !lastIterationFinished {
+            notifyRepeatListeners()
+        }
+
+        overallFraction = clampFraction(fraction)
+
+        let currentIterationFraction = getCurrentIterationFraction(overallFraction)
+
+        animateValue(fraction: currentIterationFraction)
         return lastIterationFinished
+    }
+
+    private func getCurrentIterationFraction(_ overallFraction: Float) -> Float {
+        let iteration = getCurrentIteration(overallFraction)
+        return overallFraction - Float(iteration)
+    }
+
+    private func getCurrentIteration(_ overallFraction: Float) -> Int {
+        let iteration = floorf(overallFraction)
+        let isInteger = fabsf(iteration - overallFraction) < Float.ulpOfOne
+        if isInteger && iteration > 0 {
+            return Int(iteration - 1.0)
+        } else {
+            return Int(iteration)
+        }
+    }
+
+    private func clampFraction(_ fraction: Float) -> Float {
+        if repeatCount != RepeatCount.INFINITE {
+            return min(fraction, Float(repeatCount + 1))
+        } else {
+            return fraction
+        }
     }
 
     public func doAnimationFrame(frameTime: TimeInterval) {
@@ -80,6 +116,12 @@ public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U
     private func notifyStartListeners() {
         _ = listeners.map { l in
             l.onAnimationStart(animator: self)
+        }
+    }
+
+    private func notifyRepeatListeners() {
+        _ = listeners.map { l in
+            l.onAnimationRepeat(animator: self)
         }
     }
 
@@ -131,14 +173,17 @@ public protocol AnimatorListenerProtocol {
 
     func onAnimationStart(animator: ObjectAnimator<myType, evaluatorType>)
     func onAnimationEnd(animator: ObjectAnimator<myType, evaluatorType>)
+    func onAnimationRepeat(animator: ObjectAnimator<myType, evaluatorType>)
 }
 
-extension AnimatorListenerProtocol {
+public extension AnimatorListenerProtocol {
     func onAnimationStart(animator: ObjectAnimator<myType, evaluatorType>) {
     }
 
-
     func onAnimationEnd(animator: ObjectAnimator<myType, evaluatorType>) {
+    }
+
+    func onAnimationRepeat(animator: ObjectAnimator<myType, evaluatorType>) {
     }
 }
 
@@ -146,10 +191,12 @@ extension AnimatorListenerProtocol {
 public struct AnimatorListener<T, E: TypeEvaluator>: AnimatorListenerProtocol where E.valueType == T {
     private let _onAnimationStart: (ObjectAnimator<T, E>) -> ()
     private let _onAnimationEnd: (ObjectAnimator<T, E>) -> ()
+    private let _onAnimationRepeat: (ObjectAnimator<T, E>) -> ()
 
-    init<P: AnimatorListenerProtocol>(_ dep: P) where P.myType == T, P.evaluatorType == E {
+    public init<P: AnimatorListenerProtocol>(_ dep: P) where P.myType == T, P.evaluatorType == E {
         _onAnimationStart = dep.onAnimationStart
         _onAnimationEnd = dep.onAnimationEnd
+        _onAnimationRepeat = dep.onAnimationRepeat
     }
 
     public func onAnimationStart(animator: ObjectAnimator<T, E>) {
@@ -159,5 +206,13 @@ public struct AnimatorListener<T, E: TypeEvaluator>: AnimatorListenerProtocol wh
     public func onAnimationEnd(animator: ObjectAnimator<T, E>) {
         _onAnimationEnd(animator)
     }
+
+    public func onAnimationRepeat(animator: ObjectAnimator<T, E>) {
+        _onAnimationRepeat(animator)
+    }
 }
 
+
+public struct RepeatCount {
+    public static let INFINITE = -1
+}

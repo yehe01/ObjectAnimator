@@ -78,12 +78,40 @@ class ObjectAnimatorTests: XCTestCase {
         XCTAssertEqual(animator.getAnimatedValue()!, 121212.0, "Animated value should be 121212.0")
     }
 
+    func testFractionNotExceeding1() {
+        animator.duration = 5
+        animator.start()
+
+        provider.setFrameTime(0)
+        provider.setFrameTime(6)
+        XCTAssertEqual(animator.currentFraction, 1.0, "Animated fraction should be 1.0")
+    }
+
+    func testFractionInRepeatMode() {
+        animator.duration = 5
+        animator.repeatCount = 1
+        animator.start()
+
+        provider.setFrameTime(0)
+        provider.setFrameTime(2)
+        // new iteration
+        provider.setFrameTime(6)
+        XCTAssertEqual(animator.isStarted, true, "isStarted should be false")
+        XCTAssertEqual(animator.currentFraction, 0.2, accuracy: 0.0001, "Animated fraction should be 20%")
+
+        // last iteration
+        provider.setFrameTime(11)
+        XCTAssertEqual(animator.isStarted, false, "isStarted should be false")
+        XCTAssertEqual(animator.currentFraction, 1.0, accuracy: 0.0001, "Animated fraction should be 20%")
+    }
+
     func testAnimatorListener() {
         animator.duration = 5
 
         class TestFloatAnimatorListener: AnimatorListenerProtocol {
             var startCalled = false
             var endCalled = false
+            var repeatCalled = false
 
             func onAnimationStart(animator: ObjectAnimator<Float, FloatEvaluator>) {
                 startCalled = true
@@ -92,6 +120,10 @@ class ObjectAnimatorTests: XCTestCase {
             func onAnimationEnd(animator: ObjectAnimator<Float, FloatEvaluator>) {
                 endCalled = true
             }
+
+            func onAnimationRepeat(animator: ObjectAnimator<Float, FloatEvaluator>) {
+                repeatCalled = true
+            }
         }
 
         let testListener = TestFloatAnimatorListener()
@@ -99,7 +131,7 @@ class ObjectAnimatorTests: XCTestCase {
         animator.addListener(listener)
 
         XCTAssertEqual(testListener.startCalled, false, "startCalled should be false")
-        XCTAssertEqual(testListener.startCalled, false, "endCalled should be false")
+        XCTAssertEqual(testListener.endCalled, false, "endCalled should be false")
 
         animator.start()
         provider.setFrameTime(0)
@@ -108,6 +140,76 @@ class ObjectAnimatorTests: XCTestCase {
 
         animator.end()
         XCTAssertEqual(testListener.endCalled, true, "endCalled should be true")
+        XCTAssertEqual(testListener.repeatCalled, false, "repeatCalled should be true")
+    }
+
+    func testAnimatorOnRepeatListener() {
+        animator.duration = 3
+        animator.repeatCount = 2
+
+        class TestFloatAnimatorListener: AnimatorListenerProtocol {
+            var repeatCalled = 0
+
+            func onAnimationRepeat(animator: ObjectAnimator<Float, FloatEvaluator>) {
+                repeatCalled += 1
+            }
+        }
+
+        let testListener = TestFloatAnimatorListener()
+        let listener = AnimatorListener<Float, FloatEvaluator>(testListener)
+        animator.addListener(listener)
+
+        XCTAssertEqual(testListener.repeatCalled, 0, "On repeat listener not called")
+
+        animator.start()
+        provider.setFrameTime(0)
+        provider.setFrameTime(2)
+        provider.setFrameTime(2.99999)
+        XCTAssertEqual(testListener.repeatCalled, 0, "On repeat listener should not be called")
+
+        provider.setFrameTime(3)
+        XCTAssertEqual(testListener.repeatCalled, 1, "On repeat listener should be called once")
+
+        provider.setFrameTime(6)
+        XCTAssertEqual(testListener.repeatCalled, 2, "On repeat listener should be called twice")
+
+        provider.setFrameTime(7.0001)
+        XCTAssertEqual(testListener.repeatCalled, 2, "On repeat listener should be called twice")
+    }
+    
+    func testAnimatorInfiniteRepeatCount() {
+        animator.duration = 3
+        animator.repeatCount = RepeatCount.INFINITE
+        
+        class TestFloatAnimatorListener: AnimatorListenerProtocol {
+            var repeatCalled = 0
+            
+            func onAnimationRepeat(animator: ObjectAnimator<Float, FloatEvaluator>) {
+                repeatCalled += 1
+            }
+        }
+        
+        let testListener = TestFloatAnimatorListener()
+        let listener = AnimatorListener<Float, FloatEvaluator>(testListener)
+        animator.addListener(listener)
+        
+        XCTAssertEqual(testListener.repeatCalled, 0, "On repeat listener not called")
+        
+        animator.start()
+        provider.setFrameTime(0)
+        provider.setFrameTime(3)
+
+        XCTAssertEqual(testListener.repeatCalled, 1, "On repeat listener should be called once")
+        
+        provider.setFrameTime(6)
+        provider.setFrameTime(9)
+        provider.setFrameTime(12)
+        XCTAssertEqual(testListener.repeatCalled, 4, "On repeat listener should be called 4 times")
+        XCTAssertEqual(animator.isStarted, true, "isStarted should be false")
+        
+        animator.end()
+        provider.setFrameTime(16)
+        XCTAssertEqual(testListener.repeatCalled, 4, "On repeat listener should be called 4 times")
     }
 
     // MARK: Animator using system pulse provider

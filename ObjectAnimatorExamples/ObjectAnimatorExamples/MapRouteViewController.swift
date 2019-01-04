@@ -11,7 +11,8 @@ import ObjectAnimator
 import CoreLocation
 import MapKit
 
-class ViewController: UIViewController, MKMapViewDelegate {
+class MapRouteViewController: UIViewController, AnimatorListenerProtocol {
+    
     private var polyline: MKPolyline?
     private var points: [CLLocationCoordinate2D] = []
     private var mapView: MKMapView!
@@ -80,7 +81,7 @@ class ViewController: UIViewController, MKMapViewDelegate {
         let directionRequest = MKDirections.Request()
         directionRequest.source = sourceMapItem
         directionRequest.destination = destinationMapItem
-        directionRequest.transportType = .automobile
+        directionRequest.transportType = .walking
         
         let directions = MKDirections(request: directionRequest)
         
@@ -137,8 +138,23 @@ class ViewController: UIViewController, MKMapViewDelegate {
             self?.mapView.addOverlay(newPolyline)
             self?.mapView.removeOverlay(polyline)
         }
-        
+
+        let animatorListener = AnimatorListener<CLLocationCoordinate2D, LatLngEvaluator>(self)
+        animator.addListener(animatorListener)
+        animator.repeatCount = 3
         animator.start()
+    }
+
+    func onAnimationRepeat(animator: ObjectAnimator<CLLocationCoordinate2D, LatLngEvaluator>) {
+        points.removeAll()
+        guard let oldPolyline = self.polyline else {
+            return
+        }
+
+        let newPolyline = MKPolyline(coordinates: points, count: points.count)
+        self.polyline = newPolyline
+        mapView.addOverlay(newPolyline)
+        mapView.removeOverlay(oldPolyline)
     }
     
     func getUniformSpeedAnimator(_ coordinates: [CLLocationCoordinate2D]) -> ObjectAnimator<CLLocationCoordinate2D, LatLngEvaluator> {
@@ -175,6 +191,9 @@ class ViewController: UIViewController, MKMapViewDelegate {
         return ObjectAnimator(valueHolder: valueHolder)
     }
     
+}
+
+extension MapRouteViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         let polylineRenderer = MKPolylineRenderer(overlay: overlay)
         if overlay is MKPolyline {
