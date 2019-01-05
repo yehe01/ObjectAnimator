@@ -7,9 +7,9 @@
 //
 
 import XCTest
-@testable import ObjectAnimatorExamples
+@testable import Examples
 
-class ObjectAnimatorExamplesTests: XCTestCase {
+class ExamplesTests: XCTestCase {
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.

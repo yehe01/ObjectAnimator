@@ -12,7 +12,7 @@ public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U
 //    private var isRunning = false
     private(set) var currentFraction: Float = 0.0;
 
-    public var duration: TimeInterval = -1
+    public var duration: TimeInterval = 0.3
     public var repeatCount: Int = 0
 
     var valueHolder: PropertyValuesHolder<T, U>?

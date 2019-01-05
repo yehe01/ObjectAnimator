@@ -8,13 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		980BAB0A21D111A20056B9F6 /* LatLngEvaluator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 980BAB0921D111A20056B9F6 /* LatLngEvaluator.swift */; };
+		98A5B47421E0C9CD00C61C13 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 98A5B47321E0C9CD00C61C13 /* README.md */; };
+		98A5B47621E0CC5D00C61C13 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 98A5B47521E0CC5D00C61C13 /* LICENSE */; };
 		98D918C521BF84F10022A7A4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D918C421BF84F10022A7A4 /* AppDelegate.swift */; };
 		98D918C721BF84F10022A7A4 /* MapRouteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D918C621BF84F10022A7A4 /* MapRouteViewController.swift */; };
 		98D918CA21BF84F10022A7A4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98D918C821BF84F10022A7A4 /* Main.storyboard */; };
 		98D918CC21BF84F30022A7A4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 98D918CB21BF84F30022A7A4 /* Assets.xcassets */; };
 		98D918CF21BF84F30022A7A4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 98D918CD21BF84F30022A7A4 /* LaunchScreen.storyboard */; };
-		98D918DA21BF84F30022A7A4 /* ObjectAnimatorExamplesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D918D921BF84F30022A7A4 /* ObjectAnimatorExamplesTests.swift */; };
-		98D918E521BF84F30022A7A4 /* ObjectAnimatorExamplesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D918E421BF84F30022A7A4 /* ObjectAnimatorExamplesUITests.swift */; };
+		98D918DA21BF84F30022A7A4 /* ExamplesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D918D921BF84F30022A7A4 /* ExamplesTests.swift */; };
+		98D918E521BF84F30022A7A4 /* ExamplesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98D918E421BF84F30022A7A4 /* ExamplesUITests.swift */; };
 		98D918FB21BF85BC0022A7A4 /* ObjectAnimator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98D918F821BF85210022A7A4 /* ObjectAnimator.framework */; };
 		98D918FC21BF85BC0022A7A4 /* ObjectAnimator.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 98D918F821BF85210022A7A4 /* ObjectAnimator.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -73,18 +75,20 @@
 
 /* Begin PBXFileReference section */
 		980BAB0921D111A20056B9F6 /* LatLngEvaluator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatLngEvaluator.swift; sourceTree = "<group>"; };
-		98D918C121BF84F10022A7A4 /* ObjectAnimatorExamples.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ObjectAnimatorExamples.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		98A5B47321E0C9CD00C61C13 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		98A5B47521E0CC5D00C61C13 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		98D918C121BF84F10022A7A4 /* Examples.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Examples.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		98D918C421BF84F10022A7A4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		98D918C621BF84F10022A7A4 /* MapRouteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapRouteViewController.swift; sourceTree = "<group>"; };
 		98D918C921BF84F10022A7A4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		98D918CB21BF84F30022A7A4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		98D918CE21BF84F30022A7A4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		98D918D021BF84F30022A7A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		98D918D521BF84F30022A7A4 /* ObjectAnimatorExamplesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObjectAnimatorExamplesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		98D918D921BF84F30022A7A4 /* ObjectAnimatorExamplesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectAnimatorExamplesTests.swift; sourceTree = "<group>"; };
+		98D918D521BF84F30022A7A4 /* ExamplesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExamplesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		98D918D921BF84F30022A7A4 /* ExamplesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExamplesTests.swift; sourceTree = "<group>"; };
 		98D918DB21BF84F30022A7A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		98D918E021BF84F30022A7A4 /* ObjectAnimatorExamplesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObjectAnimatorExamplesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		98D918E421BF84F30022A7A4 /* ObjectAnimatorExamplesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectAnimatorExamplesUITests.swift; sourceTree = "<group>"; };
+		98D918E021BF84F30022A7A4 /* ExamplesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExamplesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		98D918E421BF84F30022A7A4 /* ExamplesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExamplesUITests.swift; sourceTree = "<group>"; };
 		98D918E621BF84F30022A7A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		98D918F221BF85210022A7A4 /* ObjectAnimator.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ObjectAnimator.xcodeproj; path = ../ObjectAnimator/ObjectAnimator.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -118,10 +122,12 @@
 		98D918B821BF84F10022A7A4 = {
 			isa = PBXGroup;
 			children = (
+				98A5B47521E0CC5D00C61C13 /* LICENSE */,
+				98A5B47321E0C9CD00C61C13 /* README.md */,
 				98D918F221BF85210022A7A4 /* ObjectAnimator.xcodeproj */,
-				98D918C321BF84F10022A7A4 /* ObjectAnimatorExamples */,
-				98D918D821BF84F30022A7A4 /* ObjectAnimatorExamplesTests */,
-				98D918E321BF84F30022A7A4 /* ObjectAnimatorExamplesUITests */,
+				98D918C321BF84F10022A7A4 /* Examples */,
+				98D918D821BF84F30022A7A4 /* ExamplesTests */,
+				98D918E321BF84F30022A7A4 /* ExamplesUITests */,
 				98D918C221BF84F10022A7A4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -129,14 +135,14 @@
 		98D918C221BF84F10022A7A4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				98D918C121BF84F10022A7A4 /* ObjectAnimatorExamples.app */,
-				98D918D521BF84F30022A7A4 /* ObjectAnimatorExamplesTests.xctest */,
-				98D918E021BF84F30022A7A4 /* ObjectAnimatorExamplesUITests.xctest */,
+				98D918C121BF84F10022A7A4 /* Examples.app */,
+				98D918D521BF84F30022A7A4 /* ExamplesTests.xctest */,
+				98D918E021BF84F30022A7A4 /* ExamplesUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		98D918C321BF84F10022A7A4 /* ObjectAnimatorExamples */ = {
+		98D918C321BF84F10022A7A4 /* Examples */ = {
 			isa = PBXGroup;
 			children = (
 				98D918C421BF84F10022A7A4 /* AppDelegate.swift */,
@@ -147,25 +153,25 @@
 				98D918D021BF84F30022A7A4 /* Info.plist */,
 				980BAB0921D111A20056B9F6 /* LatLngEvaluator.swift */,
 			);
-			path = ObjectAnimatorExamples;
+			path = Examples;
 			sourceTree = "<group>";
 		};
-		98D918D821BF84F30022A7A4 /* ObjectAnimatorExamplesTests */ = {
+		98D918D821BF84F30022A7A4 /* ExamplesTests */ = {
 			isa = PBXGroup;
 			children = (
-				98D918D921BF84F30022A7A4 /* ObjectAnimatorExamplesTests.swift */,
+				98D918D921BF84F30022A7A4 /* ExamplesTests.swift */,
 				98D918DB21BF84F30022A7A4 /* Info.plist */,
 			);
-			path = ObjectAnimatorExamplesTests;
+			path = ExamplesTests;
 			sourceTree = "<group>";
 		};
-		98D918E321BF84F30022A7A4 /* ObjectAnimatorExamplesUITests */ = {
+		98D918E321BF84F30022A7A4 /* ExamplesUITests */ = {
 			isa = PBXGroup;
 			children = (
-				98D918E421BF84F30022A7A4 /* ObjectAnimatorExamplesUITests.swift */,
+				98D918E421BF84F30022A7A4 /* ExamplesUITests.swift */,
 				98D918E621BF84F30022A7A4 /* Info.plist */,
 			);
-			path = ObjectAnimatorExamplesUITests;
+			path = ExamplesUITests;
 			sourceTree = "<group>";
 		};
 		98D918F321BF85210022A7A4 /* Products */ = {
@@ -180,9 +186,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		98D918C021BF84F10022A7A4 /* ObjectAnimatorExamples */ = {
+		98D918C021BF84F10022A7A4 /* Examples */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 98D918E921BF84F30022A7A4 /* Build configuration list for PBXNativeTarget "ObjectAnimatorExamples" */;
+			buildConfigurationList = 98D918E921BF84F30022A7A4 /* Build configuration list for PBXNativeTarget "Examples" */;
 			buildPhases = (
 				98D918BD21BF84F10022A7A4 /* Sources */,
 				98D918BE21BF84F10022A7A4 /* Frameworks */,
@@ -194,14 +200,14 @@
 			dependencies = (
 				98D918FE21BF85BC0022A7A4 /* PBXTargetDependency */,
 			);
-			name = ObjectAnimatorExamples;
+			name = Examples;
 			productName = ObjectAnimatorExamples;
-			productReference = 98D918C121BF84F10022A7A4 /* ObjectAnimatorExamples.app */;
+			productReference = 98D918C121BF84F10022A7A4 /* Examples.app */;
 			productType = "com.apple.product-type.application";
 		};
-		98D918D421BF84F30022A7A4 /* ObjectAnimatorExamplesTests */ = {
+		98D918D421BF84F30022A7A4 /* ExamplesTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 98D918EC21BF84F30022A7A4 /* Build configuration list for PBXNativeTarget "ObjectAnimatorExamplesTests" */;
+			buildConfigurationList = 98D918EC21BF84F30022A7A4 /* Build configuration list for PBXNativeTarget "ExamplesTests" */;
 			buildPhases = (
 				98D918D121BF84F30022A7A4 /* Sources */,
 				98D918D221BF84F30022A7A4 /* Frameworks */,
@@ -212,14 +218,14 @@
 			dependencies = (
 				98D918D721BF84F30022A7A4 /* PBXTargetDependency */,
 			);
-			name = ObjectAnimatorExamplesTests;
+			name = ExamplesTests;
 			productName = ObjectAnimatorExamplesTests;
-			productReference = 98D918D521BF84F30022A7A4 /* ObjectAnimatorExamplesTests.xctest */;
+			productReference = 98D918D521BF84F30022A7A4 /* ExamplesTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		98D918DF21BF84F30022A7A4 /* ObjectAnimatorExamplesUITests */ = {
+		98D918DF21BF84F30022A7A4 /* ExamplesUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 98D918EF21BF84F30022A7A4 /* Build configuration list for PBXNativeTarget "ObjectAnimatorExamplesUITests" */;
+			buildConfigurationList = 98D918EF21BF84F30022A7A4 /* Build configuration list for PBXNativeTarget "ExamplesUITests" */;
 			buildPhases = (
 				98D918DC21BF84F30022A7A4 /* Sources */,
 				98D918DD21BF84F30022A7A4 /* Frameworks */,
@@ -230,9 +236,9 @@
 			dependencies = (
 				98D918E221BF84F30022A7A4 /* PBXTargetDependency */,
 			);
-			name = ObjectAnimatorExamplesUITests;
+			name = ExamplesUITests;
 			productName = ObjectAnimatorExamplesUITests;
-			productReference = 98D918E021BF84F30022A7A4 /* ObjectAnimatorExamplesUITests.xctest */;
+			productReference = 98D918E021BF84F30022A7A4 /* ExamplesUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -258,7 +264,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 98D918BC21BF84F10022A7A4 /* Build configuration list for PBXProject "ObjectAnimatorExamples" */;
+			buildConfigurationList = 98D918BC21BF84F10022A7A4 /* Build configuration list for PBXProject "Examples" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -277,9 +283,9 @@
 			);
 			projectRoot = "";
 			targets = (
-				98D918C021BF84F10022A7A4 /* ObjectAnimatorExamples */,
-				98D918D421BF84F30022A7A4 /* ObjectAnimatorExamplesTests */,
-				98D918DF21BF84F30022A7A4 /* ObjectAnimatorExamplesUITests */,
+				98D918C021BF84F10022A7A4 /* Examples */,
+				98D918D421BF84F30022A7A4 /* ExamplesTests */,
+				98D918DF21BF84F30022A7A4 /* ExamplesUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -308,7 +314,9 @@
 			files = (
 				98D918CF21BF84F30022A7A4 /* LaunchScreen.storyboard in Resources */,
 				98D918CC21BF84F30022A7A4 /* Assets.xcassets in Resources */,
+				98A5B47421E0C9CD00C61C13 /* README.md in Resources */,
 				98D918CA21BF84F10022A7A4 /* Main.storyboard in Resources */,
+				98A5B47621E0CC5D00C61C13 /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,7 +351,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				98D918DA21BF84F30022A7A4 /* ObjectAnimatorExamplesTests.swift in Sources */,
+				98D918DA21BF84F30022A7A4 /* ExamplesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -351,7 +359,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				98D918E521BF84F30022A7A4 /* ObjectAnimatorExamplesUITests.swift in Sources */,
+				98D918E521BF84F30022A7A4 /* ExamplesUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -360,12 +368,12 @@
 /* Begin PBXTargetDependency section */
 		98D918D721BF84F30022A7A4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 98D918C021BF84F10022A7A4 /* ObjectAnimatorExamples */;
+			target = 98D918C021BF84F10022A7A4 /* Examples */;
 			targetProxy = 98D918D621BF84F30022A7A4 /* PBXContainerItemProxy */;
 		};
 		98D918E221BF84F30022A7A4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 98D918C021BF84F10022A7A4 /* ObjectAnimatorExamples */;
+			target = 98D918C021BF84F10022A7A4 /* Examples */;
 			targetProxy = 98D918E121BF84F30022A7A4 /* PBXContainerItemProxy */;
 		};
 		98D918FE21BF85BC0022A7A4 /* PBXTargetDependency */ = {
@@ -518,7 +526,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = UZQ96SMH7Y;
-				INFOPLIST_FILE = ObjectAnimatorExamples/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Examples/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -537,7 +545,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = UZQ96SMH7Y;
-				INFOPLIST_FILE = ObjectAnimatorExamples/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/Examples/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -566,7 +574,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ObjectAnimatorExamples.app/ObjectAnimatorExamples";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Examples.app/Examples";
 			};
 			name = Debug;
 		};
@@ -587,7 +595,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ObjectAnimatorExamples.app/ObjectAnimatorExamples";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Examples.app/Examples";
 			};
 			name = Release;
 		};
@@ -634,7 +642,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		98D918BC21BF84F10022A7A4 /* Build configuration list for PBXProject "ObjectAnimatorExamples" */ = {
+		98D918BC21BF84F10022A7A4 /* Build configuration list for PBXProject "Examples" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				98D918E721BF84F30022A7A4 /* Debug */,
@@ -643,7 +651,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		98D918E921BF84F30022A7A4 /* Build configuration list for PBXNativeTarget "ObjectAnimatorExamples" */ = {
+		98D918E921BF84F30022A7A4 /* Build configuration list for PBXNativeTarget "Examples" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				98D918EA21BF84F30022A7A4 /* Debug */,
@@ -652,7 +660,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		98D918EC21BF84F30022A7A4 /* Build configuration list for PBXNativeTarget "ObjectAnimatorExamplesTests" */ = {
+		98D918EC21BF84F30022A7A4 /* Build configuration list for PBXNativeTarget "ExamplesTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				98D918ED21BF84F30022A7A4 /* Debug */,
@@ -661,7 +669,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		98D918EF21BF84F30022A7A4 /* Build configuration list for PBXNativeTarget "ObjectAnimatorExamplesUITests" */ = {
+		98D918EF21BF84F30022A7A4 /* Build configuration list for PBXNativeTarget "ExamplesUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				98D918F021BF84F30022A7A4 /* Debug */,
