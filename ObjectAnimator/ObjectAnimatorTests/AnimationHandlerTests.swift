@@ -26,7 +26,7 @@ class AnimationHandlerTests: XCTestCase {
         animator2.end()
     }
 
-    func testSingleAnimatorCallbackRemoved() {
+    func testSingleAnimatorCallbackRemovedWhenAnimationEnds() {
         let handler = AnimationHandler.shared
         animator.duration = 3
         
@@ -38,7 +38,7 @@ class AnimationHandlerTests: XCTestCase {
         XCTAssertTrue(handler.animationCallbacks.isEmpty, "Animator callbacks should be empty")
     }
     
-    func testMultipleAnimatorCallbacks() {
+    func testMultipleAnimatorCallbacksWhenAnimationEnds() {
         let handler = AnimationHandler.shared
         animator.duration = 3
         animator2.duration = 5
@@ -56,4 +56,65 @@ class AnimationHandlerTests: XCTestCase {
         XCTAssertEqual(handler.animationCallbacks.count, 0, "Animator callbacks should be empty")
     }
 
+    func testAnimatorCallbackRemovedWhenNextFrameArrivesAndAnimationIsPaused() {
+        let handler = AnimationHandler.shared
+        animator.duration = 3
+        
+        animator.start()
+        provider.setFrameTime(0)
+        XCTAssertEqual(handler.animationCallbacks.count, 1, "Should have 1 animator callbacks")
+        animator.pause()
+        XCTAssertEqual(handler.animationCallbacks.count, 1, "Should have 1 animator callbacks until next frame arrives")
+        provider.setFrameTime(1)
+        XCTAssertEqual(handler.animationCallbacks.count, 0, "Should have 0 animator callbacks")
+    }
+    
+    func testAnimatorCallbackOnlyRemovedOnceWhenAnimationPausedTwice() {
+        let handler = AnimationHandler.shared
+        animator.duration = 3
+        animator2.duration = 5
+        
+        animator.start()
+        animator2.start()
+        
+        provider.setFrameTime(0)
+        XCTAssertEqual(handler.animationCallbacks.count, 2, "Should have 2 animator callbacks")
+        
+        animator2.pause()
+        provider.setFrameTime(1)
+        animator2.pause()
+        provider.setFrameTime(2)
+        XCTAssertEqual(handler.animationCallbacks.count, 1, "Should have 2 animator callbacks")
+    }
+    
+    func testAnimatorCallbackAddedWhenAnimationChangedFromPausedToResumed() {
+        let handler = AnimationHandler.shared
+        animator.duration = 3
+        
+        animator.start()
+        provider.setFrameTime(0)
+        animator.pause()
+        provider.setFrameTime(1)
+        XCTAssertEqual(handler.animationCallbacks.count, 0, "Should have 0 animator callback")
+        
+        animator.resume()
+        XCTAssertEqual(handler.animationCallbacks.count, 1, "Should have 1 animator callback")
+    }
+    
+    func testAnimatorCallbackOnlyAddedOnceWhenAnimationResumesTwice() {
+        let handler = AnimationHandler.shared
+        animator.duration = 3
+        
+        animator.start()
+        provider.setFrameTime(0)
+        animator.pause()
+        provider.setFrameTime(1)
+        XCTAssertEqual(handler.animationCallbacks.count, 0, "Should have 0 animator callback")
+        
+        animator.resume()
+        XCTAssertEqual(handler.animationCallbacks.count, 1, "Should have 1 animator callback")
+        
+        animator.resume()
+        XCTAssertEqual(handler.animationCallbacks.count, 1, "Should have 1 animator callback")
+    }
 }

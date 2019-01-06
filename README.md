@@ -11,7 +11,7 @@ Long press on the map to set start point and end point. Route will be drawn with
 
 ## Todo (Essential)
 
-* Resume/Pause
+* ~~Resume/Pause~~
 * ~~Repeat~~
 * Reverse
 * Start delay

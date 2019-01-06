@@ -9,6 +9,13 @@ public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U
     
     var startTime: TimeInterval = -1
     var isStarted = false
+    var isPaused = false
+    /**
+     * Set on the next frame after pause() is called, used to calculate a new startTime
+     * which allows the animator to continue from the point at which it was paused.
+     * If negative, has not yet been set.
+     */
+    var pauseTime: TimeInterval = -1
 //    private var isRunning = false
     private(set) var currentFraction: Float = 0.0;
 
@@ -48,6 +55,20 @@ public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U
 
         _ = updateListeners.map { l in
             l(self)
+        }
+    }
+    
+    public func pause() {
+        isPaused = true
+        pauseTime = -1
+    }
+    
+    public func resume() {
+        if isPaused {
+            isPaused = false
+            if pauseTime > -1 {
+                addAnimationCallback()
+            }
         }
     }
 
@@ -94,6 +115,19 @@ public class ObjectAnimator<T, U: TypeEvaluator>: AnimationFrameCallback where U
         if startTime < 0 {
             startTime = frameTime
         }
+        
+        if isPaused {
+            pauseTime = frameTime
+            removeAnimationCallback()
+            return
+        } else {
+            // pauseTime > 0 means animation is just changed from paused
+            if pauseTime > 0 {
+                startTime += (frameTime - pauseTime)
+                pauseTime = -1
+            }
+        }
+        
         let finished = animateBasedOnTime(currentTime: frameTime)
 
         if finished {

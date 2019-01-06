@@ -78,6 +78,66 @@ class ObjectAnimatorTests: XCTestCase {
         XCTAssertEqual(animator.getAnimatedValue()!, 121212.0, "Animated value should be 121212.0")
     }
 
+    func testFractionNotChangedWhenAnimationIsPaused() {
+        animator.duration = 4
+        animator.start()
+        
+        provider.setFrameTime(0)
+        provider.setFrameTime(2)
+        XCTAssertEqual(animator.currentFraction, 0.5, accuracy: 0.00001, "Animated fraction should be 0.5")
+        animator.pause()
+        provider.setFrameTime(3)
+        XCTAssertEqual(animator.currentFraction, 0.5, accuracy: 0.00001, "Animated fraction should be 0.5")
+    }
+    
+    func testFractionNotChangedWhenAnimationPausedAndResumedWithinOnceFrame() {
+        animator.duration = 8
+        animator.start()
+        
+        provider.setFrameTime(0)
+        provider.setFrameTime(2)
+        XCTAssertEqual(animator.currentFraction, 0.25, accuracy: 0.00001, "Animated fraction should be 0.25")
+        animator.pause()
+        animator.resume()
+        provider.setFrameTime(6)
+        XCTAssertEqual(animator.currentFraction, 0.75, accuracy: 0.00001, "Animated fraction should be 0.75")
+    }
+    
+    func testFractionAjustedWhenAnimationResumesAfterBeingPaused() {
+        animator.duration = 4
+        animator.start()
+        
+        provider.setFrameTime(0)
+        provider.setFrameTime(2)
+        XCTAssertEqual(animator.currentFraction, 0.5, accuracy: 0.00001, "Animated fraction should be 0.5")
+        animator.pause()
+        provider.setFrameTime(3)
+        XCTAssertEqual(animator.currentFraction, 0.5, accuracy: 0.00001, "Animated fraction should be 0.5")
+        
+        animator.resume()
+        // paused time is 3
+        // start time adujsted to 0 + 4 - 3 = 1
+        provider.setFrameTime(4)
+        XCTAssertEqual(animator.currentFraction, 0.75, accuracy: 0.00001, "Animated fraction should be 0.75")
+        
+        provider.setFrameTime(5)
+        XCTAssertEqual(animator.currentFraction, 1, accuracy: 0.00001, "Animated fraction should be 1")
+    }
+    
+    func testFractionNotAdjustedWhenResumeCalledOnRunningAnimation() {
+        animator.duration = 8
+        animator.start()
+        
+        provider.setFrameTime(0)
+        provider.setFrameTime(2)
+        XCTAssertEqual(animator.currentFraction, 0.25, accuracy: 0.00001, "Animated fraction should be 0.25")
+        
+        animator.resume()
+
+        provider.setFrameTime(4)
+        XCTAssertEqual(animator.currentFraction, 0.5, accuracy: 0.00001, "Animated fraction should be 0.5")
+    }
+    
     func testFractionNotExceeding1() {
         animator.duration = 5
         animator.start()
